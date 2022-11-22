@@ -1,3 +1,4 @@
+import Alert from '@components/Common/Alert'
 import CheckOutline from '@components/Common/Icons/CheckOutline'
 import { Loader } from '@components/UIElements/Loader'
 import { Listbox, Transition } from '@headlessui/react'
@@ -49,6 +50,10 @@ const PostList = () => {
     }
   })
 
+  if (loading) return <Loader className="my-10" />
+  if (error) return <Alert variant="danger">Failed to fetch!</Alert>
+  if (!channelVideos.length) return null
+
   return (
     <div>
       <div className="flex items-center mb-1 space-x-1.5">
@@ -68,7 +73,7 @@ const PostList = () => {
         }
       >
         <div className="relative mt-1">
-          <Listbox.Button className="relative w-full py-2.5 pl-4 pr-10 text-left border dark:border-gray-700 border-gray-300 rounded-xl focus:outline-none sm:text-sm">
+          <Listbox.Button className="relative w-full py-2 pl-4 pr-10 text-left border dark:border-gray-700 border-gray-300 rounded-xl focus:outline-none sm:text-sm">
             <span className="block truncate">
               {channelVideos[0]?.metadata?.name}
             </span>

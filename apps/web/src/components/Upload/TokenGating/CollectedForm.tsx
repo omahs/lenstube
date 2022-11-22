@@ -1,9 +1,7 @@
 import { Button } from '@components/UIElements/Button'
 import { zodResolver } from '@hookform/resolvers/zod'
-import useAppStore from '@lib/store'
-import type { Erc20 } from 'lens'
 import type { Dispatch, FC } from 'react'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useForm } from 'react-hook-form'
 import type { TokenGatingType, UploadedVideo } from 'utils'
 import { WMATIC_TOKEN_ADDRESS } from 'utils'
@@ -49,23 +47,6 @@ const CollectedForm: FC<Props> = ({
       collectLimit: uploadedVideo.collectModule.collectLimit || '1'
     }
   })
-  const selectedChannel = useAppStore((state) => state.selectedChannel)
-  const [selectedCurrencySymbol, setSelectedCurrencySymbol] = useState('WMATIC')
-
-  useEffect(() => {
-    if (
-      uploadedVideo.collectModule.isLimitedFeeCollect ||
-      uploadedVideo.collectModule.isLimitedTimeFeeCollect
-    ) {
-      register('collectLimit')
-    } else {
-      unregister('collectLimit')
-    }
-  }, [uploadedVideo.collectModule, register, unregister])
-
-  const getCurrencySymbol = (currencies: Erc20[], address: string) => {
-    return currencies.find((c) => c.address === address)?.symbol as string
-  }
 
   const onSubmit = (data: FormData) => {
     const amount = Number(data.amount)
