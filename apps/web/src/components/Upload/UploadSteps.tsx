@@ -75,7 +75,6 @@ const UploadSteps = () => {
 
   useEffect(() => {
     Analytics.track('Pageview', { path: TRACK.PAGE_VIEW.UPLOAD.STEPS })
-
     if (uploadedVideo.videoSource) {
       resetToDefaults()
     }

@@ -16,6 +16,7 @@ import { z } from 'zod'
 import Category from './Category'
 import CollectModule from './CollectModule'
 import ReferenceModule from './ReferenceModule'
+import TokenGating from './TokenGating'
 import Video from './Video'
 
 const ContentAlert = ({ message }: { message: ReactNode }) => (
@@ -151,6 +152,9 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
             </div>
             <div className="mt-4">
               <Category />
+            </div>
+            <div className="mt-4">
+              <TokenGating />
             </div>
             <div className="mt-4">
               <ReferenceModule />

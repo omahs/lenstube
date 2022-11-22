@@ -1,10 +1,12 @@
 import { WebBundlr } from '@bundlr-network/client'
-import type { FetchSignerResult } from '@wagmi/core'
+import { LensEnvironment, LensGatedSDK } from '@lens-protocol/sdk-gated'
+import type { FetchSignerResult, Provider, Signer } from '@wagmi/core'
 import type { Profile } from 'lens'
 import type { BundlrDataState, LenstubePublication, UploadedVideo } from 'utils'
 import {
   BUNDLR_CURRENCY,
   BUNDLR_NODE_URL,
+  IS_MAINNET,
   POLYGON_RPC_URL,
   WMATIC_TOKEN_ADDRESS
 } from 'utils'
@@ -45,6 +47,11 @@ export const UPLOADED_VIDEO_FORM_DEFAULTS = {
     followerOnlyReferenceModule: false,
     degreesOfSeparationReferenceModule: null
   },
+  tokenGating: {
+    instance: null,
+    isAccessRestricted: false,
+    collectedPublication: null
+  },
   isNSFW: false,
   isNSFWThumbnail: false
 }
@@ -82,6 +89,10 @@ interface AppState {
   setUpNextVideo: (upNextVideo: LenstubePublication) => void
   setBundlrData: (bundlrData: { [k: string]: any }) => void
   getBundlrInstance: (signer: FetchSignerResult) => Promise<WebBundlr | null>
+  getTokenGatingInstance: (
+    signer: Signer,
+    provider: Provider
+  ) => Promise<LensGatedSDK | null>
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -131,6 +142,23 @@ export const useAppStore = create<AppState>((set) => ({
       set((state) => ({
         uploadedVideo: { ...state.uploadedVideo, loading: false }
       }))
+      return null
+    }
+  },
+  getTokenGatingInstance: async (signer, provider) => {
+    try {
+      const gatedSdk = await LensGatedSDK.create({
+        provider,
+        signer,
+        env: IS_MAINNET ? LensEnvironment.Polygon : LensEnvironment.Mumbai
+      })
+      await gatedSdk.connect({
+        address: await signer.getAddress(),
+        env: LensEnvironment.Mumbai
+      })
+      return gatedSdk
+    } catch (error) {
+      logger.error('[Error Init GatedSdk]', error)
       return null
     }
   }

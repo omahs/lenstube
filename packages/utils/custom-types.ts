@@ -1,4 +1,5 @@
 import type { WebBundlr } from '@bundlr-network/client'
+import type { LensGatedSDK } from '@lens-protocol/sdk-gated'
 import type {
   Attribute,
   Comment,
@@ -57,6 +58,12 @@ export type ReferenceModuleType = {
   } | null
 }
 
+export type TokenGatingType = {
+  instance?: LensGatedSDK | null
+  isAccessRestricted: boolean
+  collectedPublication?: string | null
+}
+
 export type UploadedVideo = {
   stream: FileReaderStreamType | null
   preview: string
@@ -80,6 +87,7 @@ export type UploadedVideo = {
   referenceModule: ReferenceModuleType
   isNSFW: boolean
   isNSFWThumbnail: boolean
+  tokenGating: TokenGatingType
 }
 
 export type HLSData = {
