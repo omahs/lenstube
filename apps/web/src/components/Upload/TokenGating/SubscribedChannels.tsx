@@ -1,20 +1,14 @@
 import TimesOutline from '@components/Common/Icons/TimesOutline'
 import Channels from '@components/Common/Search/Channels'
 import { Input } from '@components/UIElements/Input'
-import { Loader } from '@components/UIElements/Loader'
 import useAppStore from '@lib/store'
 import clsx from 'clsx'
 import type { Profile } from 'lens'
-import {
-  PublicationMainFocus,
-  PublicationTypes,
-  SearchRequestTypes,
-  useSearchProfilesLazyQuery
-} from 'lens'
+import { SearchRequestTypes, useSearchProfilesLazyQuery } from 'lens'
 import type { FC } from 'react'
 import React, { useEffect, useState } from 'react'
 import type { TokenGatingCondition } from 'utils'
-import { Analytics, LENS_CUSTOM_FILTERS, TRACK } from 'utils'
+import { Analytics, TRACK } from 'utils'
 import useDebounce from 'utils/hooks/useDebounce'
 
 type Props = {
@@ -23,20 +17,11 @@ type Props = {
 }
 
 const SubscribedChannels: FC<Props> = ({ condition, position }) => {
-  const selectedChannel = useAppStore((state) => state.selectedChannel)
   const uploadedVideo = useAppStore((state) => state.uploadedVideo)
   const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
 
   const [keyword, setKeyword] = useState('')
   const debouncedValue = useDebounce<string>(keyword, 500)
-
-  const request = {
-    publicationTypes: [PublicationTypes.Post],
-    limit: 32,
-    metadata: { mainContentFocus: [PublicationMainFocus.Video] },
-    customFilters: LENS_CUSTOM_FILTERS,
-    profileId: selectedChannel?.id
-  }
 
   const [searchChannels, { data, loading }] = useSearchProfilesLazyQuery()
 
@@ -83,8 +68,6 @@ const SubscribedChannels: FC<Props> = ({ condition, position }) => {
   const clearSearch = () => {
     setKeyword('')
   }
-
-  if (loading) return <Loader className="my-10" />
 
   return (
     <div>

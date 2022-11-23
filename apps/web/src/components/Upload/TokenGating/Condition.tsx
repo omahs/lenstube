@@ -1,4 +1,3 @@
-import { Input } from '@components/UIElements/Input'
 import useAppStore from '@lib/store'
 import clsx from 'clsx'
 import type { Dispatch, FC } from 'react'
@@ -6,6 +5,7 @@ import React from 'react'
 import type { TokenGatingCondition } from 'utils'
 
 import CollectedPosts from './CollectedPosts'
+import OwnsNFT from './OwnsNFT'
 import SubscribedChannels from './SubscribedChannels'
 
 type Props = {
@@ -99,7 +99,9 @@ const Condition: FC<Props> = ({ condition, position, setShowModal }) => {
           {condition.follows.selected && (
             <SubscribedChannels condition={condition} position={position} />
           )}
-          {condition.owns.selected && <Input />}
+          {condition.owns.selected && (
+            <OwnsNFT condition={condition} position={position} />
+          )}
         </div>
       </div>
       <button
