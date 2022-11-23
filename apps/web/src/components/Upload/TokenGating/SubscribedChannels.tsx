@@ -88,38 +88,45 @@ const SubscribedChannels: FC<Props> = ({ condition, position }) => {
 
   return (
     <div>
-      <div className="flex items-center mb-1 space-x-1.5">
-        <div className="text-xs font-semibold opacity-70">Select a channel</div>
-      </div>
-      <div className="relative">
-        <Input
-          onChange={(event) => setKeyword(event.target.value)}
-          placeholder="search channels"
-          value={keyword}
-        />
-        <div
-          className={clsx(
-            'md:absolute w-full mt-1 text-base bg-white overflow-hidden dark:bg-theme rounded-xl ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm',
-            { hidden: debouncedValue.length === 0 }
-          )}
-        >
-          {data?.search?.__typename === 'ProfileSearchResult' && (
-            <Channels
-              linked={false}
-              onSelect={(id, handle) => onSelectChannel(id, handle)}
-              results={channels as Profile[]}
-              loading={loading}
-              clearSearch={clearSearch}
+      {!condition.follows.handle ? (
+        <>
+          <div className="flex items-center mb-1 space-x-1.5">
+            <div className="text-xs font-semibold opacity-70">
+              Select a channel
+            </div>
+          </div>
+          <div className="relative">
+            <Input
+              onChange={(event) => setKeyword(event.target.value)}
+              placeholder="search channels"
+              value={keyword}
             />
-          )}
-        </div>
-      </div>
-      <span className="bg-gray-200 inline-flex space-x-1 items-center dark:bg-gray-800 px-2 py-0.5 text-xs rounded-xl">
-        <span>{condition.follows.handle}</span>
-        <button type="button">
-          <TimesOutline className="w-2.5 h-2.5" />
-        </button>
-      </span>
+            <div
+              className={clsx(
+                'md:absolute w-full mt-1 text-base bg-white overflow-hidden dark:bg-theme rounded-xl ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm',
+                { hidden: debouncedValue.length === 0 }
+              )}
+            >
+              {data?.search?.__typename === 'ProfileSearchResult' && (
+                <Channels
+                  linked={false}
+                  onSelect={(id, handle) => onSelectChannel(id, handle)}
+                  results={channels as Profile[]}
+                  loading={loading}
+                  clearSearch={clearSearch}
+                />
+              )}
+            </div>
+          </div>
+        </>
+      ) : (
+        <span className="bg-gray-200 inline-flex space-x-1.5 items-center dark:bg-gray-800 px-2 py-0.5 text-sm rounded-xl">
+          <span>{condition.follows.handle}</span>
+          <button onClick={() => onSelectChannel('', '')} type="button">
+            <TimesOutline className="w-3 h-3" />
+          </button>
+        </span>
+      )}
     </div>
   )
 }

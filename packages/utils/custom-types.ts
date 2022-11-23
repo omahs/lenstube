@@ -60,7 +60,7 @@ export type ReferenceModuleType = {
 }
 
 export type TokenGatingCondition = {
-  collected: { selected: boolean; publicationId?: string }
+  collected: { selected: boolean; publicationId?: string; title?: string }
   follows: { selected: boolean; profileId?: string; handle?: string }
   owns: {
     selected: boolean

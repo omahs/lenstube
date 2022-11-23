@@ -53,7 +53,7 @@ export const UPLOADED_VIDEO_FORM_DEFAULTS = {
     isAccessRestricted: false,
     accessConditions: [
       {
-        collected: { selected: true, publicationId: '' },
+        collected: { selected: true, publicationId: '', title: '' },
         follows: { selected: false, profileId: '', handle: '' },
         owns: {
           selected: false,

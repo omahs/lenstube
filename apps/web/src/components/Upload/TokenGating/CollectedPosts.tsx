@@ -56,11 +56,13 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
     }
   })
 
-  const onSelectPublication = (publicationId: string) => {
+  const onSelectPublication = (data: string) => {
+    const publicationId = data.split('__')[0]
+    const publicationTitle = data.split('__')[1]
     const conditions = uploadedVideo.tokenGating.accessConditions
     conditions[position] = {
       ...conditions[position],
-      collected: { publicationId, selected: true }
+      collected: { publicationId, selected: true, title: publicationTitle }
     }
     setUploadedVideo({
       ...uploadedVideo,
@@ -77,17 +79,14 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
 
   return (
     <div>
-      <div className="flex items-center mb-1 space-x-1.5">
-        <div className="text-xs font-semibold opacity-70">Select a video</div>
-      </div>
       <Listbox
         value={condition.collected.publicationId}
-        onChange={(id) => onSelectPublication(id)}
+        onChange={(data) => onSelectPublication(data)}
       >
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full py-2 pl-4 pr-10 text-left border dark:border-gray-700 border-gray-300 rounded-xl focus:outline-none sm:text-sm">
             <span className="block truncate">
-              {channelVideos[0]?.metadata?.name}
+              {condition.collected.title || 'Select a video'}
             </span>
             <span className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
               <CheckOutline className="w-3 h-3" />
@@ -108,7 +107,7 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
                       active ? 'bg-gray-100 dark:bg-gray-800' : ''
                     }`
                   }
-                  value={video.id}
+                  value={`${video.id}__${video.metadata?.name}`}
                 >
                   {({ selected }) => (
                     <>
