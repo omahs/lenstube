@@ -3,6 +3,7 @@ import type { LensGatedSDK } from '@lens-protocol/sdk-gated'
 import type {
   Attribute,
   Comment,
+  ContractType,
   FeeCollectModuleSettings,
   FreeCollectModuleSettings,
   LimitedFeeCollectModuleSettings,
@@ -58,10 +59,22 @@ export type ReferenceModuleType = {
   } | null
 }
 
+export type TokenGatingCondition = {
+  collected: { selected: boolean; publicationId?: string }
+  follows: { selected: boolean; profileId?: string; handle?: string }
+  owns: {
+    selected: boolean
+    contractAddress?: string
+    chainID?: number
+    contractType?: ContractType
+    tokenIds?: string[]
+  }
+}
+
 export type TokenGatingType = {
   instance?: LensGatedSDK | null
   isAccessRestricted: boolean
-  collectedPublication?: string | null
+  accessConditions: Array<TokenGatingCondition>
 }
 
 export type UploadedVideo = {

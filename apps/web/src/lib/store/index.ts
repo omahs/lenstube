@@ -2,6 +2,7 @@ import { WebBundlr } from '@bundlr-network/client'
 import { LensEnvironment, LensGatedSDK } from '@lens-protocol/sdk-gated'
 import type { FetchSignerResult, Provider, Signer } from '@wagmi/core'
 import type { Profile } from 'lens'
+import { ContractType } from 'lens'
 import type { BundlrDataState, LenstubePublication, UploadedVideo } from 'utils'
 import {
   BUNDLR_CURRENCY,
@@ -50,7 +51,19 @@ export const UPLOADED_VIDEO_FORM_DEFAULTS = {
   tokenGating: {
     instance: null,
     isAccessRestricted: false,
-    collectedPublication: null
+    accessConditions: [
+      {
+        collected: { selected: true, publicationId: '' },
+        follows: { selected: false, profileId: '', handle: '' },
+        owns: {
+          selected: false,
+          contractAddress: '',
+          chainID: 137,
+          contractType: ContractType.Erc721,
+          tokenIds: []
+        }
+      }
+    ]
   },
   isNSFW: false,
   isNSFWThumbnail: false

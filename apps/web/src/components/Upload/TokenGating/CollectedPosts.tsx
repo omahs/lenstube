@@ -8,12 +8,18 @@ import {
   PublicationTypes,
   useProfilePostsQuery
 } from 'lens'
+import type { FC } from 'react'
 import React, { Fragment } from 'react'
 import { useInView } from 'react-cool-inview'
-import type { LenstubePublication } from 'utils'
+import type { LenstubePublication, TokenGatingCondition } from 'utils'
 import { LENS_CUSTOM_FILTERS, SCROLL_ROOT_MARGIN } from 'utils'
 
-const PostList = () => {
+type Props = {
+  condition: TokenGatingCondition
+  position: number
+}
+
+const CollectedPosts: FC<Props> = ({ condition, position }) => {
   const selectedChannel = useAppStore((state) => state.selectedChannel)
   const uploadedVideo = useAppStore((state) => state.uploadedVideo)
   const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
@@ -50,6 +56,21 @@ const PostList = () => {
     }
   })
 
+  const onSelectPublication = (publicationId: string) => {
+    const conditions = uploadedVideo.tokenGating.accessConditions
+    conditions[position] = {
+      ...conditions[position],
+      collected: { publicationId, selected: true }
+    }
+    setUploadedVideo({
+      ...uploadedVideo,
+      tokenGating: {
+        ...uploadedVideo.tokenGating,
+        accessConditions: conditions
+      }
+    })
+  }
+
   if (loading) return <Loader className="my-10" />
   if (error) return <Alert variant="danger">Failed to fetch!</Alert>
   if (!channelVideos.length) return null
@@ -57,20 +78,11 @@ const PostList = () => {
   return (
     <div>
       <div className="flex items-center mb-1 space-x-1.5">
-        <div className="text-xs font-semibold opacity-70">
-          who collected my publication
-        </div>
+        <div className="text-xs font-semibold opacity-70">Select a video</div>
       </div>
       <Listbox
-        value={uploadedVideo.tokenGating.collectedPublication}
-        onChange={(id) =>
-          setUploadedVideo({
-            tokenGating: {
-              ...uploadedVideo.tokenGating,
-              collectedPublication: id
-            }
-          })
-        }
+        value={condition.collected.publicationId}
+        onChange={(id) => onSelectPublication(id)}
       >
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full py-2 pl-4 pr-10 text-left border dark:border-gray-700 border-gray-300 rounded-xl focus:outline-none sm:text-sm">
@@ -92,7 +104,7 @@ const PostList = () => {
                 <Listbox.Option
                   key={video.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                    `relative cursor-default select-none py-2 pr-10 pl-4 ${
                       active ? 'bg-gray-100 dark:bg-gray-800' : ''
                     }`
                   }
@@ -108,7 +120,7 @@ const PostList = () => {
                         {video.metadata?.name}
                       </span>
                       {selected ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <span className="absolute inset-y-0 right-0 flex items-center pr-4">
                           <CheckOutline className="w-3 h-3" />
                         </span>
                       ) : null}
@@ -129,4 +141,4 @@ const PostList = () => {
   )
 }
 
-export default PostList
+export default CollectedPosts

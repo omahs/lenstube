@@ -11,10 +11,46 @@ import IsVerified from '../IsVerified'
 interface Props {
   results: Profile[]
   loading: boolean
+  linked?: boolean
+  onSelect?: (id: string, handle: string) => void
   clearSearch: () => void
 }
 
-const Channels: FC<Props> = ({ results, loading, clearSearch }) => {
+const ChannelItem = ({ channel }: { channel: Profile }) => (
+  <>
+    <div className="flex w-full items-center justify-between">
+      <div className="inline-flex items-center w-3/4 space-x-2">
+        <img
+          className="w-5 h-5 rounded-md"
+          src={getProfilePicture(channel, 'avatar')}
+          draggable={false}
+          alt="pfp"
+        />
+        <div className="flex items-center space-x-1">
+          <p className="text-base truncate line-clamp-1">
+            <span>{channel?.handle}</span>
+          </p>
+          <IsVerified id={channel?.id} size="xs" />
+        </div>
+      </div>
+      <span className="inline-flex items-center space-x-1 text-xs whitespace-nowrap opacity-60">
+        <BiUser />
+        <span>{formatNumber(channel.stats.totalFollowers)}</span>
+      </span>
+    </div>
+    {channel.bio && (
+      <p className="text-sm truncate opacity-60">{channel.bio}</p>
+    )}
+  </>
+)
+
+const Channels: FC<Props> = ({
+  results,
+  loading,
+  clearSearch,
+  onSelect,
+  linked = true
+}) => {
   return (
     <>
       {results?.map((channel: Profile) => (
@@ -23,35 +59,23 @@ const Channels: FC<Props> = ({ results, loading, clearSearch }) => {
           key={channel.id}
           className="relative pl-3 pr-4 cursor-default select-none hover:bg-gray-100 dark:hover:bg-gray-900"
         >
-          <Link
-            href={`/channel/${channel?.handle}`}
-            key={channel?.handle}
-            className="flex flex-col justify-center py-2 space-y-1 rounded-xl"
-          >
-            <span className="flex items-center justify-between">
-              <div className="inline-flex items-center w-3/4 space-x-2">
-                <img
-                  className="w-5 h-5 rounded-md"
-                  src={getProfilePicture(channel, 'avatar')}
-                  draggable={false}
-                  alt="pfp"
-                />
-                <div className="flex items-center space-x-1">
-                  <p className="text-base truncate line-clamp-1">
-                    <span>{channel?.handle}</span>
-                  </p>
-                  <IsVerified id={channel?.id} size="xs" />
-                </div>
-              </div>
-              <span className="inline-flex items-center space-x-1 text-xs whitespace-nowrap opacity-60">
-                <BiUser />
-                <span>{formatNumber(channel.stats.totalFollowers)}</span>
-              </span>
-            </span>
-            {channel.bio && (
-              <p className="text-sm truncate opacity-60">{channel.bio}</p>
-            )}
-          </Link>
+          {linked ? (
+            <Link
+              href={`/channel/${channel?.handle}`}
+              key={channel?.handle}
+              className="flex flex-col justify-center py-2 space-y-1 rounded-xl"
+            >
+              <ChannelItem channel={channel} />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onSelect?.(channel.id, channel.handle)}
+              className="flex w-full flex-col justify-center py-2 space-y-1 rounded-xl"
+            >
+              <ChannelItem channel={channel} />
+            </button>
+          )}
         </div>
       ))}
       {!results?.length && !loading && (

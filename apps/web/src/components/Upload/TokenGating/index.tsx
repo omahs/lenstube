@@ -7,11 +7,15 @@ import React, { useState } from 'react'
 import type { TokenGatingType } from 'utils'
 import { useProvider, useSigner } from 'wagmi'
 
-import CollectedForm from './CollectedForm'
+import Condition from './Condition'
 
 const TokenGating = () => {
   const [showModal, setShowModal] = useState(false)
   const uploadedVideo = useAppStore((state) => state.uploadedVideo)
+  console.log(
+    '🚀 ~ file: index.tsx ~ line 15 ~ TokenGating ~ uploadedVideo',
+    uploadedVideo.tokenGating
+  )
   const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
   const getTokenGatingInstance = useAppStore(
     (state) => state.getTokenGatingInstance
@@ -23,7 +27,10 @@ const TokenGating = () => {
   const initTokenGating = async () => {
     if (!signer || uploadedVideo.tokenGating.instance) return
     const gatedSdk = await getTokenGatingInstance(signer, provider)
-    setUploadedVideo({ ...uploadedVideo, tokenGating: { instance: gatedSdk } })
+    setUploadedVideo({
+      ...uploadedVideo,
+      tokenGating: { ...uploadedVideo.tokenGating, instance: gatedSdk }
+    })
   }
 
   const getSelectedTokenGatingType = () => {
@@ -37,6 +44,7 @@ const TokenGating = () => {
 
   const setTokenGatingType = (data: TokenGatingType) => {
     setUploadedVideo({
+      ...uploadedVideo,
       tokenGating: { ...uploadedVideo.tokenGating, ...data }
     })
   }
@@ -61,7 +69,7 @@ const TokenGating = () => {
       </button>
       <Modal
         title="Who can view your content?"
-        panelClassName="max-w-lg"
+        panelClassName="max-w-md h-96"
         onClose={() => setShowModal(false)}
         show={showModal}
       >
@@ -71,7 +79,8 @@ const TokenGating = () => {
               type="button"
               onClick={() =>
                 setTokenGatingType({
-                  isAccessRestricted: false
+                  isAccessRestricted: false,
+                  accessConditions: uploadedVideo.tokenGating.accessConditions
                 })
               }
               className={clsx(
@@ -91,7 +100,8 @@ const TokenGating = () => {
               type="button"
               onClick={() =>
                 setTokenGatingType({
-                  isAccessRestricted: true
+                  isAccessRestricted: true,
+                  accessConditions: uploadedVideo.tokenGating.accessConditions
                 })
               }
               className={clsx(
@@ -109,11 +119,14 @@ const TokenGating = () => {
             </button>
           </div>
           {uploadedVideo.tokenGating.isAccessRestricted ? (
-            <CollectedForm
-              uploadedVideo={uploadedVideo}
-              setTokenGatingType={setTokenGatingType}
-              setShowModal={setShowModal}
-            />
+            uploadedVideo.tokenGating.accessConditions?.map((condition, i) => (
+              <Condition
+                key={i}
+                position={i}
+                condition={condition}
+                setShowModal={setShowModal}
+              />
+            ))
           ) : (
             <div className="flex justify-end">
               <Button type="button" onClick={() => setShowModal(false)}>
