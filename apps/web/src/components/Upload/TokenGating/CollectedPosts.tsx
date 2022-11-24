@@ -127,11 +127,12 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
                   )}
                 </Listbox.Option>
               ))}
-              {pageInfo?.next && channelVideos.length !== pageInfo?.totalCount && (
+              {pageInfo?.next &&
+              channelVideos.length !== pageInfo?.totalCount ? (
                 <span ref={observe} className="flex justify-center p-10">
                   <Loader />
                 </span>
-              )}
+              ) : null}
             </Listbox.Options>
           </Transition>
         </div>
