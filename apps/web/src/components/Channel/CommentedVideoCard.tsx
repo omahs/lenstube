@@ -12,6 +12,7 @@ import { Analytics, STATIC_ASSETS, TRACK } from 'utils'
 import { getTimeFromSeconds } from 'utils/functions/formatTime'
 import { getValueFromTraitType } from 'utils/functions/getFromAttributes'
 import { getIsSensitiveContent } from 'utils/functions/getIsSensitiveContent'
+import getLensHandle from 'utils/functions/getLensHandle'
 import getProfilePicture from 'utils/functions/getProfilePicture'
 import getThumbnailUrl from 'utils/functions/getThumbnailUrl'
 import imageCdn from 'utils/functions/imageCdn'
@@ -37,6 +38,7 @@ const CommentedVideoCard: FC<Props> = ({ video }) => {
     <div
       onClick={() => Analytics.track(TRACK.CLICK_VIDEO)}
       className="overflow-hidden group rounded-xl"
+      role="button"
     >
       <Link href={`/watch/${commentedOn.id}`}>
         <div className="relative rounded-xl aspect-w-16 aspect-h-8">
@@ -70,13 +72,13 @@ const CommentedVideoCard: FC<Props> = ({ video }) => {
       <div className="py-2">
         <div className="flex items-start space-x-2.5">
           <Link
-            href={`/channel/${commentedOn.profile?.handle}`}
+            href={`/channel/${getLensHandle(commentedOn.profile?.handle)}`}
             className="flex-none mt-0.5"
           >
             <img
-              className="w-8 h-8 rounded-xl"
+              className="w-8 h-8 rounded-full"
               src={getProfilePicture(commentedOn?.profile, 'avatar')}
-              alt={commentedOn?.profile?.handle}
+              alt={getLensHandle(commentedOn?.profile?.handle)}
               draggable={false}
             />
           </Link>
@@ -90,7 +92,7 @@ const CommentedVideoCard: FC<Props> = ({ video }) => {
               </Link>
             </div>
             <Link
-              href={`/channel/${commentedOn.profile?.handle}`}
+              href={`/channel/${getLensHandle(commentedOn.profile?.handle)}`}
               className="flex w-fit items-center text-[13px] space-x-0.5 hover:opacity-100 opacity-70"
             >
               <span>{commentedOn.profile?.handle}</span>

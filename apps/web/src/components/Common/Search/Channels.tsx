@@ -58,6 +58,7 @@ const Channels: FC<Props> = ({
           onClick={() => clearSearch()}
           key={channel.id}
           className="relative pl-3 pr-4 cursor-default select-none hover:bg-gray-100 dark:hover:bg-gray-900"
+          role="button"
         >
           {linked ? (
             <Link
