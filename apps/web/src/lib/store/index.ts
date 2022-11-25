@@ -63,6 +63,7 @@ export const UPLOADED_VIDEO_FORM_DEFAULTS = {
   tokenGating: {
     instance: null,
     isAccessRestricted: false,
+    gate: 'AND' as const,
     accessConditions: [TOKEN_GATING_ACCESS_CONDITION]
   },
   isNSFW: false,

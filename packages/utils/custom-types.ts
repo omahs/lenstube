@@ -74,6 +74,7 @@ export type TokenGatingCondition = {
 export type TokenGatingType = {
   instance?: LensGatedSDK | null
   isAccessRestricted: boolean
+  gate?: 'AND' | 'OR'
   accessConditions: Array<TokenGatingCondition>
 }
 

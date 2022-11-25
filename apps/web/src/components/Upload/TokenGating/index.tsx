@@ -82,9 +82,8 @@ const TokenGating = () => {
         <CheckOutline className="w-3 h-3" />
       </button>
       <Modal
-        title="Who can view your content?"
-        panelClassName="max-w-lg min-h-[70%] max-h-[80%] overflow-y-auto no-scrollbar"
-        onClose={() => setShowModal(false)}
+        title="Who can view your video?"
+        panelClassName="max-w-lg max-h-[80%] overflow-y-auto no-scrollbar"
         show={showModal}
       >
         <div className="mt-2 space-y-4">
@@ -144,21 +143,23 @@ const TokenGating = () => {
                   />
                 )
               )}
-              <button
-                type="button"
-                onClick={() => onAddCondition()}
-                className="justify-center mx-auto flex bg-opacity-70 hover:bg-opacity-100 mt-2 p-2 text-sm focus:outline-none dark:bg-gray-900 bg-gray-100 rounded-full"
-              >
-                <PlusOutline className="w-4 h-4" />
-              </button>
+              {uploadedVideo.tokenGating.accessConditions.length < 5 && (
+                <button
+                  type="button"
+                  onClick={() => onAddCondition()}
+                  className="justify-center space-x-2 items-center mx-auto flex bg-opacity-70 hover:bg-opacity-100 mt-2 py-2 px-3 text-sm focus:outline-none dark:bg-gray-900 bg-gray-100 rounded-full"
+                >
+                  <span className="font-medium">AND</span>
+                  <PlusOutline className="w-4 h-4" />
+                </button>
+              )}
             </>
-          ) : (
-            <div className="flex justify-end">
-              <Button type="button" onClick={() => setShowModal(false)}>
-                Set Preference
-              </Button>
-            </div>
-          )}
+          ) : null}
+          <div className="flex justify-end">
+            <Button type="button" onClick={() => setShowModal(false)}>
+              Set Preference
+            </Button>
+          </div>
         </div>
       </Modal>
     </>

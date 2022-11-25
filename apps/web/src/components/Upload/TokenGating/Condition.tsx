@@ -48,13 +48,15 @@ const Condition: FC<Props> = ({ condition, position, setShowModal }) => {
 
   return (
     <div className="border relative p-3 dark:border-gray-700 space-y-2 rounded-xl">
-      <button
-        type="button"
-        onClick={() => onRemoveCondition()}
-        className="absolute -top-1 -right-1 focus:outline-none rounded-xl bg-white dark:bg-black"
-      >
-        <TimesOutline className="w-4 h-4 text-red-500" />
-      </button>
+      {uploadedVideo.tokenGating?.accessConditions.length > 1 && (
+        <button
+          type="button"
+          onClick={() => onRemoveCondition()}
+          className="absolute -top-1 -right-1 focus:outline-none rounded-xl bg-white dark:bg-black"
+        >
+          <TimesOutline className="w-4 h-4 text-red-500" />
+        </button>
+      )}
       <div className="grid gap-3 grid-cols-3">
         <button
           type="button"
