@@ -1,7 +1,8 @@
 import CheckOutline from '@components/Common/Icons/CheckOutline'
+import PlusOutline from '@components/Common/Icons/PlusOutline'
 import { Button } from '@components/UIElements/Button'
 import Modal from '@components/UIElements/Modal'
-import useAppStore from '@lib/store'
+import useAppStore, { TOKEN_GATING_ACCESS_CONDITION } from '@lib/store'
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import type { TokenGatingType } from 'utils'
@@ -49,6 +50,19 @@ const TokenGating = () => {
     })
   }
 
+  const onAddCondition = () => {
+    setUploadedVideo({
+      ...uploadedVideo,
+      tokenGating: {
+        ...uploadedVideo.tokenGating,
+        accessConditions: [
+          ...uploadedVideo.tokenGating.accessConditions,
+          TOKEN_GATING_ACCESS_CONDITION
+        ]
+      }
+    })
+  }
+
   return (
     <>
       <div className="flex items-center mb-1 space-x-1.5">
@@ -69,7 +83,7 @@ const TokenGating = () => {
       </button>
       <Modal
         title="Who can view your content?"
-        panelClassName="max-w-md h-96"
+        panelClassName="max-w-lg min-h-[70%] max-h-[80%] overflow-y-auto no-scrollbar"
         onClose={() => setShowModal(false)}
         show={showModal}
       >
@@ -119,14 +133,25 @@ const TokenGating = () => {
             </button>
           </div>
           {uploadedVideo.tokenGating.isAccessRestricted ? (
-            uploadedVideo.tokenGating.accessConditions?.map((condition, i) => (
-              <Condition
-                key={i}
-                position={i}
-                condition={condition}
-                setShowModal={setShowModal}
-              />
-            ))
+            <>
+              {uploadedVideo.tokenGating.accessConditions?.map(
+                (condition, i) => (
+                  <Condition
+                    key={i}
+                    position={i}
+                    condition={condition}
+                    setShowModal={setShowModal}
+                  />
+                )
+              )}
+              <button
+                type="button"
+                onClick={() => onAddCondition()}
+                className="justify-center mx-auto flex bg-opacity-70 hover:bg-opacity-100 mt-2 p-2 text-sm focus:outline-none dark:bg-gray-900 bg-gray-100 rounded-full"
+              >
+                <PlusOutline className="w-4 h-4" />
+              </button>
+            </>
           ) : (
             <div className="flex justify-end">
               <Button type="button" onClick={() => setShowModal(false)}>

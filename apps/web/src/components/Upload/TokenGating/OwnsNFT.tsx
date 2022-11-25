@@ -16,19 +16,32 @@ const OwnsNFT: FC<Props> = ({ condition, position }) => {
   return (
     <div>
       <div className="flex items-center mb-1 space-x-1.5">
-        <div className="text-xs font-semibold opacity-70">Select a channel</div>
+        <div className="text-xs font-semibold opacity-70">NFT details</div>
       </div>
-      <div className="relative">
-        <Input
-          onChange={(event) => {}}
-          placeholder="contract address"
-          value={condition.owns.contractAddress}
-        />
-        <Input
-          onChange={(event) => {}}
-          placeholder="token id"
-          value={condition.owns.contractAddress}
-        />
+      <div className="space-y-2">
+        <div>
+          <select
+            autoComplete="off"
+            className="bg-white text-sm p-2.5 rounded-xl dark:bg-gray-900 border border-gray-300 dark:border-gray-700 disabled:opacity-60 disabled:bg-gray-500 disabled:bg-opacity-20 outline-none w-full"
+          >
+            <option value="80001">Polygon</option>
+            <option value="1">Ethereum</option>
+          </select>
+        </div>
+        <div>
+          <Input
+            onChange={(event) => {}}
+            placeholder="contract address"
+            value={condition.owns.contractAddress}
+          />
+        </div>
+        <div>
+          <Input
+            onChange={(event) => {}}
+            placeholder="token id (optional)"
+            value={condition.owns.contractAddress}
+          />
+        </div>
       </div>
     </div>
   )

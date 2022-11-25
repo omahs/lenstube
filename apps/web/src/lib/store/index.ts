@@ -15,6 +15,18 @@ import { CREATOR_VIDEO_CATEGORIES } from 'utils/data/categories'
 import logger from 'utils/logger'
 import create from 'zustand'
 
+export const TOKEN_GATING_ACCESS_CONDITION = {
+  collected: { selected: true, publicationId: '', title: '' },
+  follows: { selected: false, profileId: '', handle: '' },
+  owns: {
+    selected: false,
+    contractAddress: '',
+    chainID: 137,
+    contractType: ContractType.Erc721,
+    tokenIds: []
+  }
+}
+
 export const UPLOADED_VIDEO_FORM_DEFAULTS = {
   stream: null,
   preview: '',
@@ -51,19 +63,7 @@ export const UPLOADED_VIDEO_FORM_DEFAULTS = {
   tokenGating: {
     instance: null,
     isAccessRestricted: false,
-    accessConditions: [
-      {
-        collected: { selected: true, publicationId: '', title: '' },
-        follows: { selected: false, profileId: '', handle: '' },
-        owns: {
-          selected: false,
-          contractAddress: '',
-          chainID: 137,
-          contractType: ContractType.Erc721,
-          tokenIds: []
-        }
-      }
-    ]
+    accessConditions: [TOKEN_GATING_ACCESS_CONDITION]
   },
   isNSFW: false,
   isNSFWThumbnail: false
