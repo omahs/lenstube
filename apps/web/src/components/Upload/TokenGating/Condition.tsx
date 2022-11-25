@@ -90,7 +90,7 @@ const Condition: FC<Props> = ({ condition, position, setShowModal }) => {
             }
           )}
         >
-          follows
+          subscribed
         </button>
         <button
           type="button"
@@ -111,7 +111,7 @@ const Condition: FC<Props> = ({ condition, position, setShowModal }) => {
           owns an NFT
         </button>
       </div>
-      <div className="space-y-2">
+      <div>
         {condition.collected.selected && (
           <CollectedPosts condition={condition} position={position} />
         )}

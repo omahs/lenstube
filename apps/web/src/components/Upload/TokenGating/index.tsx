@@ -126,7 +126,7 @@ const TokenGating = () => {
                 }
               )}
             >
-              <span>Certain Audience</span>
+              <span>Certain Audience (who)</span>
               {uploadedVideo?.tokenGating.isAccessRestricted && (
                 <CheckOutline className="w-3 h-3" />
               )}
