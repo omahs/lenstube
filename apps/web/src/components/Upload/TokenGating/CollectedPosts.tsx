@@ -63,7 +63,8 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
     conditions[position] = {
       ...conditions[position],
       collected: {
-        publicationId: publicationId.split('-')[0],
+        publicationId: publicationId.split('-')[1],
+        publisherId: publicationId.split('-')[0],
         selected: true,
         title: publicationTitle
       }

@@ -249,44 +249,55 @@ const UploadSteps = () => {
   const getTokenGating = async (metadata: PublicationMetadataV2Input) => {
     const gatedSdk = uploadedVideo.tokenGating.instance
     if (gatedSdk) {
-      const criteria: Array<AccessConditionOutput> = []
-      uploadedVideo.tokenGating.accessConditions.forEach((condition) => {
-        if (condition.collected.selected) {
-          criteria.push({
-            collect: {
-              publicationId: condition.collected.publicationId,
-              publisherId: selectedChannel?.id
-            }
-          })
-        }
-        if (condition.follows.selected) {
-          criteria.push({
-            follow: { profileId: condition.follows.profileId }
-          })
-        }
-        if (condition.owns.selected) {
-          criteria.push({
-            nft: {
-              contractAddress: condition.owns.contractAddress,
-              chainID: condition.owns.chainID,
-              contractType: condition.owns.contractType as ContractType,
-              tokenIds: condition.owns.tokenIds
-            }
-          })
-        }
-      })
-
-      const { contentURI, encryptedMetadata } =
-        await gatedSdk.gated.encryptMetadata(
-          metadata,
-          selectedChannel?.id,
-          {
-            and: { criteria }
-          },
-          uploadHandler
+      try {
+        const criteria: Array<AccessConditionOutput> = []
+        uploadedVideo.tokenGating.accessConditions.forEach((condition) => {
+          if (condition.collected.selected) {
+            criteria.push({
+              collect: {
+                publicationId: condition.collected.publicationId,
+                publisherId: selectedChannel?.id
+              }
+            })
+          }
+          if (condition.follows.selected) {
+            criteria.push({
+              follow: { profileId: condition.follows.profileId }
+            })
+          }
+          if (condition.owns.selected) {
+            criteria.push({
+              nft: {
+                contractAddress: condition.owns.contractAddress,
+                chainID: condition.owns.chainID,
+                contractType: condition.owns.contractType as ContractType,
+                tokenIds: condition.owns.tokenIds
+              }
+            })
+          }
+        })
+        console.log(
+          '🚀 ~ file: UploadSteps.tsx ~ line 254 ~ getTokenGating ~ criteria',
+          criteria
         )
 
-      return { contentURI, encryptedMetadata, criteria }
+        const { contentURI, encryptedMetadata } =
+          await gatedSdk.gated.encryptMetadata(
+            metadata,
+            selectedChannel?.id,
+            {
+              and: { criteria }
+            },
+            uploadHandler
+          )
+
+        return { contentURI, encryptedMetadata, criteria }
+      } catch (error) {
+        console.log(
+          '🚀 ~ file: UploadSteps.tsx ~ line 292 ~ getTokenGating ~ error',
+          error
+        )
+      }
     }
   }
 
@@ -357,7 +368,7 @@ const UploadSteps = () => {
         media,
         appId: isBytesVideo ? LENSTUBE_BYTES_APP_ID : LENSTUBE_APP_ID
       }
-      let contentURI = await uploadToAr(metadata)
+      let contentURI: string | null
       let gatedModule: Maybe<GatedPublicationParamsInput> = null
 
       if (uploadedVideo.tokenGating.isAccessRestricted) {
@@ -379,6 +390,7 @@ const UploadSteps = () => {
             gated?.encryptedMetadata.encryptionParams.providerSpecificParams.encryptionKey
         }
       }
+      contentURI = await uploadToAr(metadata)
 
       if (uploadedVideo.isSensitiveContent) {
         metadata.contentWarning = PublicationContentWarning.Sensitive

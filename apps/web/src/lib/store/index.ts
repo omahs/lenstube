@@ -16,7 +16,12 @@ import logger from 'utils/logger'
 import create from 'zustand'
 
 export const TOKEN_GATING_ACCESS_CONDITION = {
-  collected: { selected: true, publicationId: '', title: '' },
+  collected: {
+    selected: true,
+    publicationId: '',
+    publisherId: '',
+    title: ''
+  },
   follows: { selected: false, profileId: '', handle: '' },
   owns: {
     selected: false,
