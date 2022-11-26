@@ -110,7 +110,7 @@ const Video = () => {
         )}
       </div>
       <Tooltip content={`Uploaded (${uploadedVideo.percent}%)`}>
-        <div className="w-full overflow-hidden bg-gray-200 rounded-b-full">
+        <div className="w-full overflow-hidden bg-gray-500 rounded-b-full">
           <div
             className={clsx(
               'h-[6px]',

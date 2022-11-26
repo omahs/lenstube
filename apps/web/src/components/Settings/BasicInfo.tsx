@@ -200,7 +200,7 @@ const BasicInfo = ({ channel }: Props) => {
     Analytics.track(TRACK.UPDATE_CHANNEL_INFO)
     setLoading(true)
     try {
-      const { url } = await uploadToAr({
+      const url = await uploadToAr({
         version: '1.0.0',
         name: data.displayName || null,
         bio: trimify(data.description),

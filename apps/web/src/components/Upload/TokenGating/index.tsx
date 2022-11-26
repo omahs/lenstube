@@ -13,10 +13,7 @@ import Condition from './Condition'
 const TokenGating = () => {
   const [showModal, setShowModal] = useState(false)
   const uploadedVideo = useAppStore((state) => state.uploadedVideo)
-  console.log(
-    '🚀 ~ file: index.tsx ~ line 15 ~ TokenGating ~ uploadedVideo',
-    uploadedVideo.tokenGating
-  )
+
   const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
   const getTokenGatingInstance = useAppStore(
     (state) => state.getTokenGatingInstance
@@ -61,6 +58,10 @@ const TokenGating = () => {
         ]
       }
     })
+  }
+
+  const onSetPreference = () => {
+    setShowModal(false)
   }
 
   return (
@@ -125,7 +126,7 @@ const TokenGating = () => {
                 }
               )}
             >
-              <span>Certain Audience (who)</span>
+              <span>Certain Audience</span>
               {uploadedVideo?.tokenGating.isAccessRestricted && (
                 <CheckOutline className="w-3 h-3" />
               )}
@@ -156,7 +157,7 @@ const TokenGating = () => {
             </>
           ) : null}
           <div className="flex justify-end">
-            <Button type="button" onClick={() => setShowModal(false)}>
+            <Button type="button" onClick={() => onSetPreference()}>
               Set Preference
             </Button>
           </div>

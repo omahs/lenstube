@@ -62,7 +62,11 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
     const conditions = uploadedVideo.tokenGating.accessConditions
     conditions[position] = {
       ...conditions[position],
-      collected: { publicationId, selected: true, title: publicationTitle }
+      collected: {
+        publicationId: publicationId.split('-')[0],
+        selected: true,
+        title: publicationTitle
+      }
     }
     setUploadedVideo({
       ...uploadedVideo,
@@ -75,7 +79,9 @@ const CollectedPosts: FC<Props> = ({ condition, position }) => {
 
   if (loading) return <Loader className="my-10" />
   if (error) return <Alert variant="danger">Failed to fetch!</Alert>
-  if (!channelVideos.length) return null
+  if (!channelVideos.length) {
+    return <div className="text-sm text-center py-2">No videos published</div>
+  }
 
   return (
     <div>

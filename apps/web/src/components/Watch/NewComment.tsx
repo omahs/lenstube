@@ -211,7 +211,7 @@ const NewComment: FC<Props> = ({ video, refetchComments }) => {
         new Date().toLocaleString()
       )
 
-      const { url } = await uploadToAr({
+      const url = await uploadToAr({
         version: '2.0.0',
         metadata_id: uuidv4(),
         description: trimify(data.comment),

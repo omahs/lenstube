@@ -204,7 +204,7 @@ const TipModal: FC<Props> = ({ show, setShowTip, video }) => {
     try {
       setLoading(true)
       setButtonText('Uploading to Arweave...')
-      const { url } = await uploadToAr({
+      const url = await uploadToAr({
         version: '2.0.0',
         metadata_id: uuidv4(),
         description: getValues('message'),

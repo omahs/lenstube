@@ -8,18 +8,18 @@ import logger from '../logger'
 
 const uploadToAr = async (
   data: PublicationMetadataV2Input | ProfileMetadata
-): Promise<{ url: string | null }> => {
+): Promise<string | null> => {
   try {
     const response = await axios.post(
       `${LENSTUBE_API_URL}/metadata/upload`,
       data
     )
     const { url } = response.data
-    return { url }
+    return url
   } catch (error) {
     logger.error('[Error AR Data Upload]', error)
     toast.error('Failed to upload metadata!')
-    return { url: null }
+    return null
   }
 }
 

@@ -1,12 +1,17 @@
 import { LENSHUB_PROXY_ABI } from '@abis/LensHubProxy'
 import MetaTags from '@components/Common/MetaTags'
 import usePendingTxn from '@hooks/usePendingTxn'
+import type { EncryptedMetadata } from '@lens-protocol/sdk-gated'
 import useAppStore, { UPLOADED_VIDEO_FORM_DEFAULTS } from '@lib/store'
 import axios from 'axios'
 import { utils } from 'ethers'
 import type {
+  AccessConditionOutput,
+  ContractType,
   CreatePostBroadcastItemResult,
   CreatePublicPostRequest,
+  GatedPublicationParamsInput,
+  Maybe,
   MetadataAttributeInput,
   PublicationMetadataMediaInput,
   PublicationMetadataV2Input
@@ -66,6 +71,9 @@ const UploadSteps = () => {
   const uploadedVideo = useAppStore((state) => state.uploadedVideo)
   const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
   const selectedChannel = useAppStore((state) => state.selectedChannel)
+  const getTokenGatingInstance = useAppStore(
+    (state) => state.getTokenGatingInstance
+  )
   const { address } = useAccount()
   const { data: signer } = useSigner()
 
@@ -229,6 +237,59 @@ const UploadSteps = () => {
     }
   }
 
+  const uploadHandler = async (data: EncryptedMetadata) => {
+    const response = await axios.post(
+      `${LENSTUBE_API_URL}/metadata/upload`,
+      data
+    )
+    const { url } = response.data
+    return url
+  }
+
+  const getTokenGating = async (metadata: PublicationMetadataV2Input) => {
+    const gatedSdk = uploadedVideo.tokenGating.instance
+    if (gatedSdk) {
+      const criteria: Array<AccessConditionOutput> = []
+      uploadedVideo.tokenGating.accessConditions.forEach((condition) => {
+        if (condition.collected.selected) {
+          criteria.push({
+            collect: {
+              publicationId: condition.collected.publicationId,
+              publisherId: selectedChannel?.id
+            }
+          })
+        }
+        if (condition.follows.selected) {
+          criteria.push({
+            follow: { profileId: condition.follows.profileId }
+          })
+        }
+        if (condition.owns.selected) {
+          criteria.push({
+            nft: {
+              contractAddress: condition.owns.contractAddress,
+              chainID: condition.owns.chainID,
+              contractType: condition.owns.contractType as ContractType,
+              tokenIds: condition.owns.tokenIds
+            }
+          })
+        }
+      })
+
+      const { contentURI, encryptedMetadata } =
+        await gatedSdk.gated.encryptMetadata(
+          metadata,
+          selectedChannel?.id,
+          {
+            and: { criteria }
+          },
+          uploadHandler
+        )
+
+      return { contentURI, encryptedMetadata, criteria }
+    }
+  }
+
   const createPublication = async ({
     videoSource,
     playbackId
@@ -296,10 +357,32 @@ const UploadSteps = () => {
         media,
         appId: isBytesVideo ? LENSTUBE_BYTES_APP_ID : LENSTUBE_APP_ID
       }
+      let contentURI = await uploadToAr(metadata)
+      let gatedModule: Maybe<GatedPublicationParamsInput> = null
+
+      if (uploadedVideo.tokenGating.isAccessRestricted) {
+        const gated = await getTokenGating(metadata)
+        gatedModule = {
+          encryptedSymmetricKey: null,
+          and: { criteria: gated?.criteria as AccessConditionOutput[] }
+        }
+        console.log(
+          '🚀 ~ file: UploadSteps.tsx ~ line 356 ~ UploadSteps ~ gated',
+          gated
+        )
+        if (gated?.contentURI) {
+          contentURI = gated.contentURI
+        }
+
+        if (gated?.encryptedMetadata) {
+          gatedModule.encryptedSymmetricKey =
+            gated?.encryptedMetadata.encryptionParams.providerSpecificParams.encryptionKey
+        }
+      }
+
       if (uploadedVideo.isSensitiveContent) {
         metadata.contentWarning = PublicationContentWarning.Sensitive
       }
-      const { url } = await uploadToAr(metadata)
       setUploadedVideo({
         buttonText: 'Posting video...',
         loading: true
@@ -317,7 +400,7 @@ const UploadSteps = () => {
 
       const request = {
         profileId: selectedChannel?.id,
-        contentURI: url,
+        contentURI,
         collectModule: getCollectModule(uploadedVideo.collectModule),
         referenceModule: {
           followerOnlyReferenceModule:
@@ -326,8 +409,13 @@ const UploadSteps = () => {
             ?.degreesOfSeparationReferenceModule
             ? referenceModuleDegrees
             : null
-        }
+        },
+        gated: gatedModule ? gatedModule : undefined
       }
+      console.log(
+        '🚀 ~ file: UploadSteps.tsx ~ line 415 ~ UploadSteps ~ request',
+        request
+      )
       if (isBytesVideo) {
         Analytics.track(TRACK.UPLOADED_BYTE_VIDEO)
       }

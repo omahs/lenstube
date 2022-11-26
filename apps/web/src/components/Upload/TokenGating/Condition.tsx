@@ -47,7 +47,7 @@ const Condition: FC<Props> = ({ condition, position, setShowModal }) => {
   }
 
   return (
-    <div className="border relative p-3 dark:border-gray-700 space-y-2 rounded-xl">
+    <div className="border relative p-3 dark:border-gray-700 border-gray-300 space-y-2 rounded-xl">
       {uploadedVideo.tokenGating?.accessConditions.length > 1 && (
         <button
           type="button"
