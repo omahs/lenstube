@@ -71,9 +71,7 @@ const UploadSteps = () => {
   const uploadedVideo = useAppStore((state) => state.uploadedVideo)
   const setUploadedVideo = useAppStore((state) => state.setUploadedVideo)
   const selectedChannel = useAppStore((state) => state.selectedChannel)
-  const getTokenGatingInstance = useAppStore(
-    (state) => state.getTokenGatingInstance
-  )
+
   const { address } = useAccount()
   const { data: signer } = useSigner()
 
