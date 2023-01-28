@@ -14,7 +14,7 @@ const Thanks = () => {
       <div className="flex justify-center items-center w-full h-48 bg-brand-400">
         <div className="relative text-center">
           <div className="flex items-center space-x-2 text-3xl font-bold md:text-4xl">
-            Thanks supporting our community!
+            Thanks for supporting our community!
           </div>
         </div>
       </div>
